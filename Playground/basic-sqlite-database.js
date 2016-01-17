@@ -19,44 +19,39 @@ var Todo = sequelize.define('todo', {
     }
 });
 
+var User = sequelize.define('user', {
+    email: Sequelize.STRING
+});
+
+Todo.belongsTo(User);
+User.hasMany(Todo);
+
 sequelize.sync({
     // force:true    
     }).then(function() {
     console.log('Everything is synced');
     
-    Todo.findById(2).then(function(todo) {
-            if(todo) {                
-                    console.log(todo.toJSON());              
-            } else {
-                console.log('No todo found');
+    User.findById(1).then(function(user) {
+        user.getTodos({
+            where: {
+                completed: false
             }
-        });
+        }).then(function(todos) {
+            todos.forEach(function(todo) {
+                console.log(todo.toJSON());
+            })
+        })
+    });
     
-    // Todo.create({
-    //     description: "Walk Gus"
-    //     // completed: false
-    //     }).then(function(todo) {
-    //        return Todo.create({
-    //            description: 'Clean apartment'
-    //        }); 
-    //     }).then(function() {
-    //         // return Todo.findById(1)
-    //         return Todo.findAll({
-    //             where :{
-    //                 description: {
-    //                     $like: '%walk%'
-    //                 }
-    //             }
-    //         });
-    //     }).then(function(todos) {
-    //         if(todos) {
-    //             todos.forEach(function(todo) {
-    //                 console.log(todo.toJSON());
-    //             });                
-    //         } else {
-    //             console.log('No todo found');
-    //         }
-    //     }).catch(function (e) {
-    //         console.log(e);
-    //     });
+//    User.create({
+//        email: 'mike@gmail.com'
+//    }).then(function(){
+//        return Todo.create({
+//            description: 'guddles'
+//        });
+//    }).then(function(todo) {
+//        User.findById(1).then(function(user) {
+//            user.addTodo(todo);
+//        });
+//    });
 });
